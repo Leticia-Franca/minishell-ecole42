@@ -52,19 +52,22 @@ Em seguinda liberamos a matriz criada com o conteúdo separado, para posteriorme
 Então o programa acessa a `main_loop()` abrindo o mini interpretador. <br>
 O loop principal é inicializado para que os inputs sejam lidos e enviados para a função de gerenciamento. <br>
 
-![main loop](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_mainloop.png)
-
-
+<div align="left">
+  <img width="400" src="./gifs_doc/minishell_main_loop.png"/>
+</div>
+  
 #### Lexer e Parse
 Nessa parte a função para gerenciamento e tratamento da linha de comando `management_parse` é inicializada. <br>
 Para fazer o parse  dividimos a linha de comando em subcomandos, criando uma matriz de subcomandos. <br>
 Em seguida na `create_list()` iniciamos o loop para ler a matriz e criar a lista. <br>
-
-![loop_2](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_loop2.png)
+  
+<div align="left">
+  <img width="400" src="./gifs_doc/pn_create_cmd_list.png"/>
+</div>  
 
 Cada nodo equivalerá a um subcomando, ou seja, cada nodo terá a matriz de tokens de determinado subcomando.
 
-![matriz de tokens dentro nodo de subcomandos](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_cmdlist.png)
+![matriz de tokens dentro nodo de subcomandos](./gifs_doc/subcmd_node_struct.png)
 
 ###### Consideramos um subcomando o que está entre pipes e se não houver pipes o comando terá a mesma tratativa que o subcomando.<!-- ###### p.s: O loop lê um item da matriz e cria um nodo e assim sucessivamente.-->
 A medida que criamos nodos fazemos a análise e ajustes para receber os tokens. <br>
@@ -82,9 +85,12 @@ E guardamos na matriz de tokens que estará dentro do nodo com demais informaç�
 Por fim, remover aspas <br>
 
 #### Execução
-O programa inicializa `exec_process()`. <br>
-
-![loop_3](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_loop3.png) <br>
+O programa inicializa `exec_process()`.  
+  
+<div align="left">
+  <img width="400" src="./gifs_doc/ec_exec_process.png"/>
+</div>  
+  
 Os comandos são executados a medida que a lista_de_comandos é iterada. <br>
 Os FD's de entrada e saída padrão (apontados para o terminal) são "salvos". <br>
 Dessa forma, garantimos no final da execução do comando, a restauração dos FD's no mini interpretador(quando houver pipe ou redirecionamento para/de algum arquivo). <br>
