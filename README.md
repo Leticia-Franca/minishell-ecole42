@@ -4,7 +4,10 @@
 ## Minishell
 
 #### As beautiful as a shell 
-A proposta é implementar um mini interpretador de comandos, utilizando a própria biblioteca `libft` e algumas funções permitidas no projeto. <br>
+Minishell é um simples interpretador de comandos escrito em C e que usa o bash como modelo.
+Ao ser executado, exibe um prompt no terminal e aguarda o usuário entrar uma linha de comando.
+Diante de um comando inexistente, emite uma mensagem de erro e exibe novo prompt.
+<br>
 Esse interpretador deve abrir um prompt e esperar que o usuário pressione `enter` para entrar na linha de comando. <br>
 Ele localiza e executa corretamente builtins e executáveis com base na variável `PATH`. <br>
 Se não encontrar o executável, uma mensagem de erro é apresentada no prompt. <br>
