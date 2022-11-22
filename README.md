@@ -7,11 +7,10 @@
 Minishell é um simples interpretador de comandos escrito em C e que usa o bash como modelo.
 Ao ser executado, exibe um prompt no terminal e aguarda o usuário entrar uma linha de comando.
 Diante de um comando inexistente, emite uma mensagem de erro e exibe novo prompt.  
-<div align="center">
-  <img src="./gifs_doc/minishell_error_command_handling.gif"/>
+<div align="left">
+  <img width="720" src="./gifs_doc/minishell_working_1.gif"/>
 </div>
-Ele localiza e executa corretamente builtins e executáveis com base na variável `PATH`. <br>
-Se não encontrar o executável, uma mensagem de erro é apresentada no prompt. <br>
+O minishell localiza e executa corretamente builtins e executáveis com base na variável de ambiente `PATH`.
 
 ### Info <!-- explicar o projeto incluir diagramas -->
 Dividimos o minishell em 3 fases : <br>
