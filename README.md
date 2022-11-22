@@ -1,32 +1,25 @@
 ![(https://github.com/42Paris/minilibx-linux/actions/workflows/ci.yml/badge.svg)](https://img.shields.io/badge/norminette-100%25-green)
 #### Desenvolvido por lfranca- e cleticia
 
-## Minishell
+# Minishell
 
-#### As beautiful as a shell 
-A proposta é implementar um mini interpretador de comandos, utilizando a própria biblioteca `libft` e algumas funções permitidas no projeto. <br>
-Esse interpretador deve abrir um prompt e esperar que o usuário pressione `enter` para entrar na linha de comando. <br>
-Ele localiza e executa corretamente builtins e executáveis com base na variável `PATH`. <br>
-Se não encontrar o executável, uma mensagem de erro é apresentada no prompt. <br>
-
-### Info <!-- explicar o projeto incluir diagramas -->
-Dividimos o minishell em 3 fases : <br>
-`Inicialização` faz o tratamento das variáveis de ambiente e inicia o loop principal que mantém o minishell aberto. <br>
-`Parse e lexer` a comandline é dividida em subcomandos que por sua vez são divididos em tokens onde são analisados e validados. <br>
-`Execução` executa comandos. <br>
-
-As funções que definem as fases : <br>
-`sm_handler()` modifica sinais e prepara a linha de comando <br>
-`mm_list_environ()` copia as variáveis de ambiente <br>
-`pc_management_parse()` analisa e trata a comandline e cria a lista de comandos <br>
-`ec_exec_process()` executa comandos <br>
-
-Para implementar o minishell, criamos três loops principais : <br>
-`main_loop()` mantém o interpretador de comandos aberto <br>
-`create_list()` cria a lista de comandos <br>
-`exec_process()` executa a lista de comandos <br>
-
- ### Conhecimentos Prévios
+### As beautiful as a shell 
+Minishell é um simples interpretador de comandos escrito em C e que usa o bash como modelo.
+Ao ser executado, exibe um prompt no terminal e aguarda o usuário entrar uma linha de comando.
+Diante de um comando inexistente, emite uma mensagem de erro e exibe novo prompt.  
+<div align="left">
+  <img width="720" src="./gifs_doc/minishell_working_1.gif"/>
+</div>  
+  
+## Requisitos  
+O minishell apresenta os seguintes comportamentos:  
+- Localizar e executar built-ins e comandos executáveis (usando a variável de ambiente `$PATH` para esse processo);  
+- Expandir variáveis;  
+- Declarar, alterar o valor e remover variáveis a partir do prompt;  
+- Lidar com múltiplos comandos em sequência (pipes);  
+- Lidar com redirecionamentos de input/output e heredoc.  
+  
+ ## Conhecimentos Necessários
 [`FD`](https://www.computerhope.com/jargon/f/file-descriptor.htm)<br> 
 [`fork`](https://www.section.io/engineering-education/fork-in-c-programming-language/)<br>
 [`token`](https://gcc.gnu.org/onlinedocs/cpp/Tokenization.html)<br>
@@ -37,10 +30,47 @@ Para implementar o minishell, criamos três loops principais : <br>
 [`heredoc`](https://linuxize.com/post/bash-heredoc/)<br>
 [`hashtable`](https://www.geeksforgeeks.org/hashing-data-structure/)<br>
 [`environ`](https://opensource.com/article/19/8/what-are-environment-variables)<br>
-
-### Outline
-
-#### Análise
+  
+## Outline <!-- explicar o projeto incluir diagramas -->
+Dividimos o minishell em 3 fases:  
+  
+**1. Inicialização**  
+>> Ao longo do programa, precisaremos acessar algumas variáveis de ambiente para podermos localizar comandos dentro do sistema. Portanto, nessa fase gravamos essas variáveis (envs) na forma de uma lista linkada. Em seguida, iniciamos o loop principal que configura como sinais serão recebidos, inicializa o prompt e serve como eixo para o tratamento e execução da linha de comando, mantendo o minishell aberto.  
+  
+  Essa fase é definida principalmente pelas funções:  
+  
+  `mm_list_environ()` - forma a lista linkada de variáveis de ambiente  
+  `mm_main_loop()` - loop principal do minishell, serve como eixo para as etapas principais  
+  `mm_init_prompt()`- chamada no início do loop principal para configurar sinais e abrir prompt  
+  `se_set_main_signals()` - configura sinais  
+  
+**2. Parse e lexer**  
+>> A linha de comando será dividida em subcomandos (delimitados por pipe '|' ). Por sua vez, esses subcomandos serão divididos em tokens para serem analisados e validados.  
+  
+  Essa fase é definida principalmente pelas funções:  
+  
+`pc_management_parse()` - analisa e divide a linha de comando, criando uma lista em que cada nodo equivale a um subcomando.  
+`sm_split_3()` - divide a linha de comando numa matriz de subcomandos.  
+`pn_create_list()` - recebe a matriz e, a partir dela, cria a lista linkada de subcomandos. Nessa função também já validamos a sintaxe, expandimos variáveis e removemos aspas.  
+  
+**3. Execução**  
+>> Essa fase entra em um loop que itera pela lista de subcomandos, executando um a um e gerenciando inputs e/ou outputs de um para outro ou redirecionamentos para arquivos.     
+  
+  Essa fase é definida principalmente pelas funções:  
+  
+`ec_exec_process()` - loop principal dessa fase. Avalia a existência de redirecionamentos no subcomando e, a partir disso, verifica a existência de pipes e executa de acordo.  
+`er_execute_redires()` - chamada caso o subcomando tenha redirecionamento para o próximo subcomando.  
+`ec_no_redir_exec()` - chamada caso o subcomando não apresente redirecionamento.  
+`ef_finalize_exec_process()` - após executar todos os subcomandos que compõem a linha de comando pedida pelo usuário, essa função libera a lista para que o processo todo se reinicie.  
+  
+## Fluxo Principal
+  
+É possível partir dos seguintes três loops como resumo da implementação: 
+> main_loop()  
+>> create_list()  
+>> exec_process()  
+  
+### Análise
 Inicializa o projeto modificando o padrão de interrupção `SIGINT` e `SIGQUIT`, preparando para receber as linhas de comando. <br>
 Então duplicamos a matriz original `environ` vinda de fora do programa. <br>
 Ao mesmo tempo que divide a linha em duas strings por chave e valor. <br>
@@ -49,19 +79,22 @@ Em seguinda liberamos a matriz criada com o conteúdo separado, para posteriorme
 Então o programa acessa a `main_loop()` abrindo o mini interpretador. <br>
 O loop principal é inicializado para que os inputs sejam lidos e enviados para a função de gerenciamento. <br>
 
-![main loop](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_mainloop.png)
-
-
-#### Lexer e Parse
+<div align="left">
+  <img width="400" src="./gifs_doc/minishell_main_loop.png"/>
+</div>
+  
+### Lexer e Parse
 Nessa parte a função para gerenciamento e tratamento da linha de comando `management_parse` é inicializada. <br>
 Para fazer o parse  dividimos a linha de comando em subcomandos, criando uma matriz de subcomandos. <br>
 Em seguida na `create_list()` iniciamos o loop para ler a matriz e criar a lista. <br>
-
-![loop_2](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_loop2.png)
+  
+<div align="left">
+  <img width="400" src="./gifs_doc/pn_create_cmd_list.png"/>
+</div>  
 
 Cada nodo equivalerá a um subcomando, ou seja, cada nodo terá a matriz de tokens de determinado subcomando.
 
-![matriz de tokens dentro nodo de subcomandos](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_cmdlist.png)
+![matriz de tokens dentro nodo de subcomandos](./gifs_doc/subcmd_node_struct.png)
 
 ###### Consideramos um subcomando o que está entre pipes e se não houver pipes o comando terá a mesma tratativa que o subcomando.<!-- ###### p.s: O loop lê um item da matriz e cria um nodo e assim sucessivamente.-->
 A medida que criamos nodos fazemos a análise e ajustes para receber os tokens. <br>
@@ -78,10 +111,13 @@ E guardamos na matriz de tokens que estará dentro do nodo com demais informaç�
 - A informação se termina com pipe, para abrir os FD (leitura e escrita - para ser usado no fork). <br>
 Por fim, remover aspas <br>
 
-#### Execução
-O programa inicializa `exec_process()`. <br>
-
-![loop_3](https://github.com/carlarfranca/minishell_private/blob/56647a5a4f126e6d9f6b966030823021a7f20017/transparent_loop3.png) <br>
+### Execução
+O programa inicializa `exec_process()`.  
+  
+<div align="left">
+  <img width="400" src="./gifs_doc/ec_exec_process.png"/>
+</div>  
+  
 Os comandos são executados a medida que a lista_de_comandos é iterada. <br>
 Os FD's de entrada e saída padrão (apontados para o terminal) são "salvos". <br>
 Dessa forma, garantimos no final da execução do comando, a restauração dos FD's no mini interpretador(quando houver pipe ou redirecionamento para/de algum arquivo). <br>
@@ -103,19 +139,25 @@ Ao final de cada repetição, liberaremos a matriz (recriada a cada iteração p
  - Uma vez que o loop de comandos é terminado, chamamos a função de finalização `finalize_exec_process()` que atribuirá o valor correto
  à variável global `exit_status` e fará a liberação da lista de comandos. <br>
 
+  
+## Compilação  
+**Clone esse repo**  
+> git clone [url do repo] [nome do diretorio]  
+  
+**Entre no diretorio**  
+> cd [nome do diretório]  
+  
+**Gere o executável**    
+> make  
+  
+## Execução    
+> ./minishell  
 
-### Compilação
-`cd minishell` acessa o diretório <br>
-`make` compila arquivos <br>
-`make clean` remove objetos <br>
-`make fclean` remove objetos e arquivos binários <br>
-`make re` recompila <br>
-
-### Implementação
-`./minishell`<br>
-
-### Depuração 
+## Depuração 
 [`analysis tool`](https://valgrind.org/docs/manual/manual-core-adv.html) <br>
-`valgrind --leak-check=full ./minishell` lista tipos <br>
-`valgrind --leak-check=full --show-leak-kinds=all ./minishell` lista detalhes <br>
+**Lista as ocorrências de erros**  
+> valgrind --leak-check=full ./minishell  
+  
+**Lista erros com mais detalhes**
+> valgrind --leak-check=full --show-leak-kinds=all ./minishell <br>
 
