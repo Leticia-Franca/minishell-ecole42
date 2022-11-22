@@ -107,19 +107,25 @@ Ao final de cada repetição, liberaremos a matriz (recriada a cada iteração p
  - Uma vez que o loop de comandos é terminado, chamamos a função de finalização `finalize_exec_process()` que atribuirá o valor correto
  à variável global `exit_status` e fará a liberação da lista de comandos. <br>
 
-
-### Compilação
-`cd minishell` acessa o diretório <br>
-`make` compila arquivos <br>
-`make clean` remove objetos <br>
-`make fclean` remove objetos e arquivos binários <br>
-`make re` recompila <br>
-
-### Implementação
-`./minishell`<br>
+  
+## Compilação  
+**Clone esse repo**  
+> git clone [url do repo] [nome do diretorio]  
+  
+**Entre no diretorio**  
+> cd [nome do diretório]  
+  
+**Gere o executável**    
+> make  
+  
+## Execução    
+> ./minishell  
 
 ### Depuração 
 [`analysis tool`](https://valgrind.org/docs/manual/manual-core-adv.html) <br>
-`valgrind --leak-check=full ./minishell` lista tipos <br>
-`valgrind --leak-check=full --show-leak-kinds=all ./minishell` lista detalhes <br>
+**Lista as ocorrências de erros**  
+> valgrind --leak-check=full ./minishell  
+  
+**Lista erros com mais detalhes**
+> valgrind --leak-check=full --show-leak-kinds=all ./minishell <br>
 
