@@ -9,10 +9,17 @@ Ao ser executado, exibe um prompt no terminal e aguarda o usuário entrar uma li
 Diante de um comando inexistente, emite uma mensagem de erro e exibe novo prompt.  
 <div align="left">
   <img width="720" src="./gifs_doc/minishell_working_1.gif"/>
-</div>
-O minishell localiza e executa corretamente builtins e executáveis com base na variável de ambiente `PATH`.
+</div>  
   
- ## Conhecimentos Prévios
+## Requisitos  
+O minishell apresenta os seguintes comportamentos:  
+- Localizar e executar built-ins e comandos executáveis (usando a variável de ambiente `$PATH` para esse processo);  
+- Expandir variáveis;  
+- Declarar, alterar o valor e remover variáveis a partir do prompt;  
+- Lidar com múltiplos comandos em sequência (pipes);  
+- Lidar com redirecionamentos de input/output e heredoc.  
+  
+ ## Conhecimentos Necessários
 [`FD`](https://www.computerhope.com/jargon/f/file-descriptor.htm)<br> 
 [`fork`](https://www.section.io/engineering-education/fork-in-c-programming-language/)<br>
 [`token`](https://gcc.gnu.org/onlinedocs/cpp/Tokenization.html)<br>
@@ -27,7 +34,7 @@ O minishell localiza e executa corretamente builtins e executáveis com base na 
 ## Outline <!-- explicar o projeto incluir diagramas -->
 Dividimos o minishell em 3 fases:  
   
-**Inicialização**  
+**1. Inicialização**  
 >> Ao longo do programa, precisaremos acessar algumas variáveis de ambiente para podermos localizar comandos dentro do sistema. Portanto, nessa fase gravamos essas variáveis (envs) na forma de uma lista linkada. Em seguida, iniciamos o loop principal que configura como sinais serão recebidos, inicializa o prompt e serve como eixo para o tratamento e execução da linha de comando, mantendo o minishell aberto.  
   
   Essa fase é definida principalmente pelas funções:  
@@ -37,7 +44,7 @@ Dividimos o minishell em 3 fases:
   `mm_init_prompt()`- chamada no início do loop principal para configurar sinais e abrir prompt  
   `se_set_main_signals()` - configura sinais  
   
-**Parse e lexer**  
+**2. Parse e lexer**  
 >> A linha de comando será dividida em subcomandos (delimitados por pipe '|' ). Por sua vez, esses subcomandos serão divididos em tokens para serem analisados e validados.  
   
   Essa fase é definida principalmente pelas funções:  
@@ -46,7 +53,7 @@ Dividimos o minishell em 3 fases:
 `sm_split_3()` - divide a linha de comando numa matriz de subcomandos.  
 `pn_create_list()` - recebe a matriz e, a partir dela, cria a lista linkada de subcomandos. Nessa função também já validamos a sintaxe, expandimos variáveis e removemos aspas.  
   
-**Execução**  
+**3. Execução**  
 >> Essa fase entra em um loop que itera pela lista de subcomandos, executando um a um e gerenciando inputs e/ou outputs de um para outro ou redirecionamentos para arquivos.     
   
   Essa fase é definida principalmente pelas funções:  
